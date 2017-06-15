@@ -3,7 +3,7 @@ package Cuckoo::Filter;
 use warnings;
 use strict;
 
-use version; our $VERSION = version->declare("v0.0.1");
+our $VERSION = "0.0.2";
 
 use Digest;
 
@@ -121,16 +121,10 @@ __END__
 
 Cuckoo::Filter - Cuckoo Filter implementation in perl
 
-
-=head1 VERSION
-
-This document describes Cuckoo::Filter version 0.0.1
-
 =head1 SYNOPSIS
 
     use Cuckoo::Filter;
 
-    # every argument is optional
     my $filter = Cuckoo::Filter->new();
     $filter->insert(1);
     $filter->lookup(1);
