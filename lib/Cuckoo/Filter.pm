@@ -40,7 +40,7 @@ sub _fingerprint {
 
 # djb hash
 sub _hash {
-    my ($self, $str) = @_;
+    my $str = shift;
     my @bytes = unpack 'C*', $str;
     my $h = 5381;
     for my $i (@bytes) {
@@ -52,8 +52,8 @@ sub _hash {
 sub lookup {
     my ($self, $item) = @_;
     my $fp = $self->_fingerprint($item);
-    my $idx1 = $self->_hash($item) % $self->{bucket_size};
-    my $idx2 = ($idx1 ^ $self->_hash($fp)) % $self->{bucket_size};
+    my $idx1 = _hash($item) % $self->{bucket_size};
+    my $idx2 = ($idx1 ^ _hash($fp)) % $self->{bucket_size};
 
     return defined $self->{buckets}[$idx1] || $self->{buckets}[$idx2];
 }
@@ -62,8 +62,8 @@ sub insert {
     my ($self, $item) = @_;
     return 0 if $self->lookup($item);
     my $fp = $self->_fingerprint($item);
-    my $idx1 = $self->_hash($item) % $self->{bucket_size};
-    my $idx2 = ($idx1 ^ $self->_hash($fp)) % $self->{bucket_size};
+    my $idx1 = _hash($item) % $self->{bucket_size};
+    my $idx2 = ($idx1 ^ _hash($fp)) % $self->{bucket_size};
     for my $index ($idx1, $idx2) {
         if (! defined $self->{buckets}[$index]) {
             $self->{buckets}[$index] = $item;
@@ -79,7 +79,7 @@ sub insert {
             $self->{buckets}[$index] = $fp;
             $f;
         };
-        $index = ($idx1 ^ $self->_hash($fp)) % $self->{bucket_size};
+        $index = ($idx1 ^ _hash($fp)) % $self->{bucket_size};
 
         if (! defined $self->{buckets}[$index]) {
             $self->{buckets}[$index] = $fp;
@@ -94,8 +94,8 @@ sub insert {
 sub delete {
     my ($self, $item) = @_;
     my $fp = $self->_fingerprint($item);
-    my $idx1 = $self->_hash($item) % $self->{bucket_size};
-    my $idx2 = ($idx1 ^ $self->_hash($fp)) % $self->{bucket_size};
+    my $idx1 = _hash($item) % $self->{bucket_size};
+    my $idx2 = ($idx1 ^ _hash($fp)) % $self->{bucket_size};
     for my $index ($idx1, $idx2) {
         if (defined $self->{buckets}[$index]) {
             delete $self->{buckets}[$index];
