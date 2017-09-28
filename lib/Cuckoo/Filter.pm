@@ -38,18 +38,15 @@ sub _fingerprint {
     return substr($digest, 0, $self->{fingerprint_size}-1);
 }
 
+# djb hash
 sub _hash {
-    my ($self, $item) = @_;
-
-    # djb hash
+    my ($self, $str) = @_;
+    my @bytes = unpack 'C*', $str;
     my $h = 5381;
-    for (my $i = 0; $i < length $item; $i++) {
-        my $prefix = $i > 0 ? "x${i} " : '';
-        my $t = unpack("${prefix}C1", $item);
-        $h = (($h << 5) + $h) + $t;
+    for my $i (@bytes) {
+        $h = (($h << 5) + $h) + $i;
     }
-
-    return $h;
+    $h;
 }
 
 sub lookup {
