@@ -3,7 +3,7 @@ package Cuckoo::Filter;
 use warnings;
 use strict;
 
-our $VERSION = "0.0.2";
+our $VERSION = "0.0.3";
 
 use Digest;
 
